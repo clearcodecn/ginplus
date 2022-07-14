@@ -911,8 +911,8 @@ func (c *Context) Render(code int, r render.Render) {
 // HTML renders the HTTP template specified by its file name.
 // It also updates the HTTP code and sets the Content-Type as "text/html".
 // See http://golang.org/doc/articles/wiki/
-func (c *Context) HTML(code int, name string, obj any) {
-	instance := c.engine.HTMLRender.Instance(name, obj)
+func (c *Context) HTML(code int, name string, obj H) {
+	instance := c.engine.HTMLRender.Instance(c, name, obj)
 	c.Render(code, instance)
 }
 
@@ -1082,34 +1082,6 @@ type Negotiate struct {
 	YAMLData any
 	Data     any
 	TOMLData any
-}
-
-// Negotiate calls different Render according to acceptable Accept format.
-func (c *Context) Negotiate(code int, config Negotiate) {
-	switch c.NegotiateFormat(config.Offered...) {
-	case binding.MIMEJSON:
-		data := chooseData(config.JSONData, config.Data)
-		c.JSON(code, data)
-
-	case binding.MIMEHTML:
-		data := chooseData(config.HTMLData, config.Data)
-		c.HTML(code, config.HTMLName, data)
-
-	case binding.MIMEXML:
-		data := chooseData(config.XMLData, config.Data)
-		c.XML(code, data)
-
-	case binding.MIMEYAML:
-		data := chooseData(config.YAMLData, config.Data)
-		c.YAML(code, data)
-
-	case binding.MIMETOML:
-		data := chooseData(config.TOMLData, config.Data)
-		c.TOML(code, data)
-
-	default:
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("the accepted formats are not offered by the server")) // nolint: errcheck
-	}
 }
 
 // NegotiateFormat returns an acceptable Accept format.

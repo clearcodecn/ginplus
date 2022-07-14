@@ -2,9 +2,10 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package render
+package ginplus
 
 import (
+	"github.com/clearcodecn/ginplus/render"
 	"html/template"
 	"net/http"
 )
@@ -20,7 +21,7 @@ type Delims struct {
 // HTMLRender interface is to be implemented by HTMLProduction and HTMLDebug.
 type HTMLRender interface {
 	// Instance returns an HTML instance.
-	Instance(string, any) Render
+	Instance(*Context, string, H) render.Render
 }
 
 // HTMLProduction contains template reference and its delims.
@@ -47,7 +48,7 @@ type HTML struct {
 var htmlContentType = []string{"text/html; charset=utf-8"}
 
 // Instance (HTMLProduction) returns an HTML instance which it realizes Render interface.
-func (r HTMLProduction) Instance(name string, data any) Render {
+func (r HTMLProduction) Instance(ctx *Context, name string, data H) render.Render {
 	return HTML{
 		Template: r.Template,
 		Name:     name,
@@ -56,7 +57,7 @@ func (r HTMLProduction) Instance(name string, data any) Render {
 }
 
 // Instance (HTMLDebug) returns an HTML instance which it realizes Render interface.
-func (r HTMLDebug) Instance(name string, data any) Render {
+func (r HTMLDebug) Instance(ctx *Context, name string, data H) render.Render {
 	return HTML{
 		Template: r.loadTemplate(),
 		Name:     name,
@@ -89,4 +90,11 @@ func (r HTML) Render(w http.ResponseWriter) error {
 // WriteContentType (HTML) writes HTML ContentType.
 func (r HTML) WriteContentType(w http.ResponseWriter) {
 	writeContentType(w, htmlContentType)
+}
+
+func writeContentType(w http.ResponseWriter, value []string) {
+	header := w.Header()
+	if val := header["Content-Type"]; len(val) == 0 {
+		header["Content-Type"] = value
+	}
 }

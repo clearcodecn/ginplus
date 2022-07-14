@@ -15,7 +15,6 @@ import (
 	"sync"
 
 	"github.com/clearcodecn/ginplus/internal/bytesconv"
-	"github.com/clearcodecn/ginplus/render"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -150,9 +149,9 @@ type Engine struct {
 	// ContextWithFallback enable fallback Context.Deadline(), Context.Done(), Context.Err() and Context.Value() when Context.Request.Context() is not nil.
 	ContextWithFallback bool
 
-	delims           render.Delims
+	delims           Delims
 	secureJSONPrefix string
-	HTMLRender       render.HTMLRender
+	HTMLRender       HTMLRender
 	FuncMap          template.FuncMap
 	allNoRoute       HandlersChain
 	allNoMethod      HandlersChain
@@ -198,7 +197,7 @@ func New() *Engine {
 		UnescapePathValues:     true,
 		MaxMultipartMemory:     defaultMultipartMemory,
 		trees:                  make(methodTrees, 0, 9),
-		delims:                 render.Delims{Left: "{{", Right: "}}"},
+		delims:                 Delims{Left: "{{", Right: "}}"},
 		secureJSONPrefix:       "while(1);",
 		trustedProxies:         []string{"0.0.0.0/0", "::/0"},
 		trustedCIDRs:           defaultTrustedCIDRs,
@@ -234,7 +233,7 @@ func (engine *Engine) allocateContext() *Context {
 
 // Delims sets template left and right delims and returns an Engine instance.
 func (engine *Engine) Delims(left, right string) *Engine {
-	engine.delims = render.Delims{Left: left, Right: right}
+	engine.delims = Delims{Left: left, Right: right}
 	return engine
 }
 
@@ -253,7 +252,7 @@ func (engine *Engine) LoadHTMLGlob(pattern string) {
 
 	if IsDebugging() {
 		debugPrintLoadTemplate(templ)
-		engine.HTMLRender = render.HTMLDebug{Glob: pattern, FuncMap: engine.FuncMap, Delims: engine.delims}
+		engine.HTMLRender = HTMLDebug{Glob: pattern, FuncMap: engine.FuncMap, Delims: engine.delims}
 		return
 	}
 
@@ -264,7 +263,7 @@ func (engine *Engine) LoadHTMLGlob(pattern string) {
 // and associates the result with HTML renderer.
 func (engine *Engine) LoadHTMLFiles(files ...string) {
 	if IsDebugging() {
-		engine.HTMLRender = render.HTMLDebug{Files: files, FuncMap: engine.FuncMap, Delims: engine.delims}
+		engine.HTMLRender = HTMLDebug{Files: files, FuncMap: engine.FuncMap, Delims: engine.delims}
 		return
 	}
 
@@ -278,7 +277,7 @@ func (engine *Engine) SetHTMLTemplate(templ *template.Template) {
 		debugPrintWARNINGSetHTMLTemplate()
 	}
 
-	engine.HTMLRender = render.HTMLProduction{Template: templ.Funcs(engine.FuncMap)}
+	engine.HTMLRender = HTMLProduction{Template: templ.Funcs(engine.FuncMap)}
 }
 
 // SetFuncMap sets the FuncMap used for template.FuncMap.
