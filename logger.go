@@ -21,7 +21,8 @@ func (a *logFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	ctx := entry.Context
 	// a. request-id
 	requestId := ctx.Value("x-request-id")
-	entry = entry.WithField("reqid", requestId)
+	newEntry := entry.WithField("reqid", requestId)
+	newEntry.Message = entry.Message
 	return a.JSONFormatter.Format(entry)
 }
 
@@ -34,6 +35,7 @@ func DefaultLogger() *logrus.Entry {
 			DisableHTMLEscape: false,
 		},
 	})
+	l.SetLevel(logrus.InfoLevel)
 	e := logrus.NewEntry(l)
 	return e
 }
@@ -42,9 +44,13 @@ func LogContext(ctx context.Context) *logrus.Entry {
 	return DefaultLogger().WithContext(ctx)
 }
 
+func Logger() HandlerFunc {
+	return LoggerWithConfig()
+}
+
 // LoggerWithConfig instance a Logger middleware with config.
 func LoggerWithConfig() HandlerFunc {
-	sid := shortid.MustNew(1, "", uint64(time.Now().UnixNano()))
+	sid := shortid.MustNew(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
 	return func(c *Context) {
 		start := time.Now()
 		if c.GetString(requestIdKey) == "" {
@@ -52,7 +58,7 @@ func LoggerWithConfig() HandlerFunc {
 		}
 		// Process request
 		c.Next()
-		dur := time.Since(start).Seconds()
+		dur := time.Since(start).Milliseconds()
 		LogContext(c).
 			WithFields(logrus.Fields{
 				"cid":    Cid(c),
@@ -60,7 +66,9 @@ func LoggerWithConfig() HandlerFunc {
 				"ip":     c.IP(),
 				"ua":     c.Request.UserAgent(),
 				"method": c.Request.Method,
-				"url":    c.Request.URL.String(),
+				"url":    c.Request.URL.Path,
+				"host":   c.Request.Host,
+				"query":  c.Request.URL.RawQuery,
 				"status": c.Writer.Status(),
 				"size":   c.Writer.Size(),
 			}).

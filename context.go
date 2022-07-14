@@ -7,6 +7,7 @@ package ginplus
 import (
 	"context"
 	"errors"
+	"github.com/sirupsen/logrus"
 	"html/template"
 	"io"
 	"io/ioutil"
@@ -1198,4 +1199,8 @@ func (c *Context) SetTheme(theme string) {
 
 func (c *Context) SetLayout(l string) {
 	c.layout = l
+}
+
+func (c *Context) Log() *logrus.Entry {
+	return LogContext(c)
 }
