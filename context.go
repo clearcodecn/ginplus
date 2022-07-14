@@ -20,9 +20,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/clearcodecn/ginplus/binding"
+	"github.com/clearcodecn/ginplus/render"
 	"github.com/gin-contrib/sse"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/gin-gonic/gin/render"
 )
 
 // Content-Type MIME of the most common data formats.

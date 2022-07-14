@@ -14,7 +14,7 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/clearcodecn/ginplus"
 )
 
 func main() {

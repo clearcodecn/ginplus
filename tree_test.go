@@ -229,7 +229,7 @@ func TestTreeWildcard(t *testing.T) {
 		{"/a", false, "/:cc", Params{Param{Key: "cc", Value: "a"}}},
 		// * Error with argument being intercepted
 		// new PR handle (/all /all/cc /a/cc)
-		// fix PR: https://github.com/gin-gonic/gin/pull/2796
+		// fix PR: https://github.com/clearcodecn/ginplus/pull/2796
 		{"/all", false, "/:cc", Params{Param{Key: "cc", Value: "all"}}},
 		{"/d", false, "/:cc", Params{Param{Key: "cc", Value: "d"}}},
 		{"/ad", false, "/:cc", Params{Param{Key: "cc", Value: "ad"}}},
@@ -719,8 +719,8 @@ func TestTreeFindCaseInsensitivePath(t *testing.T) {
 		"/u/öpfêl",
 		"/v/Äpfêl/",
 		"/v/Öpfêl",
-		"/w/♬",  // 3 byte
-		"/w/♭/", // 3 byte, last byte differs
+		"/w/♬",   // 3 byte
+		"/w/♭/",  // 3 byte, last byte differs
 		"/w/𠜎",  // 4 byte
 		"/w/𠜏/", // 4 byte
 		longPath,

@@ -1,4 +1,4 @@
-module github.com/gin-gonic/gin
+module github.com/clearcodecn/ginplus
 
 go 1.18
 
