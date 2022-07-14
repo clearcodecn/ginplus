@@ -164,6 +164,8 @@ type Engine struct {
 	maxSections      uint16
 	trustedProxies   []string
 	trustedCIDRs     []*net.IPNet
+
+	configs map[string]Config
 }
 
 var _ IRouter = &Engine{}

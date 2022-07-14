@@ -36,6 +36,10 @@ type Params []Param
 func (ps Params) Get(name string) (string, bool) {
 	for _, entry := range ps {
 		if entry.Key == name {
+			// 去除后缀 .html
+			if strings.HasSuffix(entry.Value, ".html") {
+				return strings.TrimSuffix(entry.Value, ".html"), true
+			}
 			return entry.Value, true
 		}
 	}

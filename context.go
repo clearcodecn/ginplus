@@ -5,7 +5,9 @@
 package gin
 
 import (
+	"context"
 	"errors"
+	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
@@ -16,7 +18,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gin-contrib/sse"
@@ -62,12 +63,6 @@ type Context struct {
 	params       *Params
 	skippedNodes *[]skippedNode
 
-	// This mutex protects Keys map.
-	mu sync.RWMutex
-
-	// Keys is a key/value pair exclusively for the context of each request.
-	Keys map[string]any
-
 	// Errors is a list of errors attached to all the handlers/middlewares who used this context.
 	Errors errorMsgs
 
@@ -84,6 +79,12 @@ type Context struct {
 	// SameSite allows a server to define a cookie attribute making it impossible for
 	// the browser to send this cookie along with cross-site requests.
 	sameSite http.SameSite
+
+	funcMaps template.FuncMap
+
+	data   H
+	theme  string
+	layout string
 }
 
 /************************************/
@@ -97,7 +98,6 @@ func (c *Context) reset() {
 	c.index = -1
 
 	c.fullPath = ""
-	c.Keys = nil
 	c.Errors = c.Errors[:0]
 	c.Accepted = nil
 	c.queryCache = nil
@@ -120,10 +120,11 @@ func (c *Context) Copy() *Context {
 	cp.Writer = &cp.writermem
 	cp.index = abortIndex
 	cp.handlers = nil
-	cp.Keys = map[string]any{}
-	for k, v := range c.Keys {
-		cp.Keys[k] = v
+	cp.layout = c.layout
+	if c.data != nil {
+		cp.data = c.data.Copy()
 	}
+	cp.theme = c.theme
 	paramCopy := make([]Param, len(cp.Params))
 	copy(paramCopy, cp.Params)
 	cp.Params = paramCopy
@@ -246,22 +247,15 @@ func (c *Context) Error(err error) *Error {
 // Set is used to store a new key/value pair exclusively for this context.
 // It also lazy initializes  c.Keys if it was not used previously.
 func (c *Context) Set(key string, value any) {
-	c.mu.Lock()
-	if c.Keys == nil {
-		c.Keys = make(map[string]any)
-	}
-
-	c.Keys[key] = value
-	c.mu.Unlock()
+	ctx := context.WithValue(c.Request.Context(), key, value)
+	c.Request = c.Request.WithContext(ctx)
 }
 
 // Get returns the value for the given key, ie: (value, true).
 // If the value does not exist it returns (nil, false)
 func (c *Context) Get(key string) (value any, exists bool) {
-	c.mu.RLock()
-	value, exists = c.Keys[key]
-	c.mu.RUnlock()
-	return
+	v := c.Request.Context().Value(key)
+	return v, v == nil
 }
 
 // MustGet returns the value for the given key if it exists, otherwise it panics.
@@ -752,6 +746,7 @@ func (c *Context) ShouldBindBodyWith(obj any, bb binding.BindingBody) (err error
 // If it is it will then try to parse the headers defined in Engine.RemoteIPHeaders (defaulting to [X-Forwarded-For, X-Real-Ip]).
 // If the headers are not syntactically valid OR the remote IP does not correspond to a trusted proxy,
 // the remote IP (coming from Request.RemoteAddr) is returned.
+// Deprecated
 func (c *Context) ClientIP() string {
 	// Check if we're running on a trusted platform, continue running backwards if error
 	if c.engine.TrustedPlatform != "" {
@@ -1184,19 +1179,23 @@ func (c *Context) Err() error {
 // if no value is associated with key. Successive calls to Value with
 // the same key returns the same result.
 func (c *Context) Value(key any) any {
-	if key == 0 {
-		return c.Request
-	}
-	if key == ContextKey {
-		return c
-	}
-	if keyAsString, ok := key.(string); ok {
-		if val, exists := c.Get(keyAsString); exists {
-			return val
-		}
-	}
-	if !c.engine.ContextWithFallback || c.Request == nil || c.Request.Context() == nil {
-		return nil
-	}
 	return c.Request.Context().Value(key)
+}
+
+// html 增强
+
+// FuncMap 增加模板函数.
+func (c *Context) FuncMap(name string, fn interface{}) {
+	if c.funcMaps == nil {
+		c.funcMaps = make(template.FuncMap)
+	}
+	c.funcMaps[name] = fn
+}
+
+func (c *Context) SetTheme(theme string) {
+	c.theme = theme
+}
+
+func (c *Context) SetLayout(l string) {
+	c.layout = l
 }

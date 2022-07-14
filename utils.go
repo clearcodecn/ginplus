@@ -53,6 +53,14 @@ func WrapH(h http.Handler) HandlerFunc {
 // H is a shortcut for map[string]interface{}
 type H map[string]any
 
+func (a H) Copy() H {
+	h := H{}
+	for k, v := range a {
+		h[k] = v
+	}
+	return h
+}
+
 // MarshalXML allows type H to be used with xml.Marshal.
 func (h H) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name = xml.Name{
