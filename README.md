@@ -9,10 +9,10 @@
 [![Join the chat at https://gitter.im/gin-gonic/gin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gin-gonic/gin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Sourcegraph](https://sourcegraph.com/github.com/clearcodecn/ginplus/-/badge.svg)](https://sourcegraph.com/github.com/clearcodecn/ginplus?badge)
 [![Open Source Helpers](https://www.codetriage.com/gin-gonic/gin/badges/users.svg)](https://www.codetriage.com/gin-gonic/gin)
-[![Release](https://img.shields.io/github/release/gin-gonic/gin.svg?style=flat-square)](https://github.com/clearcodecn/ginplus/releases)
+[![Release](https://img.shields.io/github/release/gin-gonic/ginplus.svg?style=flat-square)](https://github.com/clearcodecn/ginplus/releases)
 [![TODOs](https://badgen.net/https/api.tickgit.com/badgen/github.com/clearcodecn/ginplus)](https://www.tickgit.com/browse?repo=github.com/clearcodecn/ginplus)
 
-Gin is a web framework written in Go (Golang). It features a martini-like API with performance that is up to 40 times faster thanks to [httprouter](https://github.com/julienschmidt/httprouter). If you need performance and good productivity, you will love Gin.
+Gin is a web framework written in Go (Golang). It features a martini-like API with performance that is up to 40 times faster thanks to [httprouter](https://github.com/julienschmidt/httprouter). If you need performance and good productivity, you will love ginplus.
 
 
 ## Contents
@@ -86,7 +86,7 @@ Gin is a web framework written in Go (Golang). It features a martini-like API wi
 
 To install Gin package, you need to install Go and set your Go workspace first.
 
-1. You first need [Go](https://golang.org/) installed (**version 1.15+ is required**), then you can use the below Go command to install Gin.
+1. You first need [Go](https://golang.org/) installed (**version 1.15+ is required**), then you can use the below Go command to install ginplus.
 
 ```sh
 $ go get -u github.com/clearcodecn/ginplus
@@ -121,9 +121,9 @@ import (
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	r := ginplus.Default()
+	r.GET("/ping", func(c *ginplus.Context) {
+		c.JSON(http.StatusOK, ginplus.H{
 			"message": "pong",
 		})
 	})
@@ -221,7 +221,7 @@ You can find a number of ready-to-run examples at [Gin examples repository](http
 func main() {
 	// Creates a gin router with default middleware:
 	// logger and recovery (crash-free) middleware
-	router := gin.Default()
+	router := ginplus.Default()
 
 	router.GET("/someGet", getting)
 	router.POST("/somePost", posting)
@@ -242,17 +242,17 @@ func main() {
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
 	// This handler will match /user/john but will not match /user/ or /user
-	router.GET("/user/:name", func(c *gin.Context) {
+	router.GET("/user/:name", func(c *ginplus.Context) {
 		name := c.Param("name")
 		c.String(http.StatusOK, "Hello %s", name)
 	})
 
 	// However, this one will match /user/john/ and also /user/john/send
 	// If no other routers match /user/john, it will redirect to /user/john/
-	router.GET("/user/:name/*action", func(c *gin.Context) {
+	router.GET("/user/:name/*action", func(c *ginplus.Context) {
 		name := c.Param("name")
 		action := c.Param("action")
 		message := name + " is " + action
@@ -260,7 +260,7 @@ func main() {
 	})
 
 	// For each matched request Context will hold the route definition
-	router.POST("/user/:name/*action", func(c *gin.Context) {
+	router.POST("/user/:name/*action", func(c *ginplus.Context) {
 		b := c.FullPath() == "/user/:name/*action" // true
 		c.String(http.StatusOK, "%t", b)
 	})
@@ -268,7 +268,7 @@ func main() {
 	// This handler will add a new router for /user/groups.
 	// Exact routes are resolved before param routes, regardless of the order they were defined.
 	// Routes starting with /user/groups are never interpreted as /user/:name/... routes
-	router.GET("/user/groups", func(c *gin.Context) {
+	router.GET("/user/groups", func(c *ginplus.Context) {
 		c.String(http.StatusOK, "The available groups are [...]")
 	})
 
@@ -280,11 +280,11 @@ func main() {
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
 	// Query string parameters are parsed using the existing underlying request object.
 	// The request responds to a url matching:  /welcome?firstname=Jane&lastname=Doe
-	router.GET("/welcome", func(c *gin.Context) {
+	router.GET("/welcome", func(c *ginplus.Context) {
 		firstname := c.DefaultQuery("firstname", "Guest")
 		lastname := c.Query("lastname") // shortcut for c.Request.URL.Query().Get("lastname")
 
@@ -298,13 +298,13 @@ func main() {
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
-	router.POST("/form_post", func(c *gin.Context) {
+	router.POST("/form_post", func(c *ginplus.Context) {
 		message := c.PostForm("message")
 		nick := c.DefaultPostForm("nick", "anonymous")
 
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusOK, ginplus.H{
 			"status":  "posted",
 			"message": message,
 			"nick":    nick,
@@ -325,9 +325,9 @@ name=manu&message=this_is_great
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
-	router.POST("/post", func(c *gin.Context) {
+	router.POST("/post", func(c *ginplus.Context) {
 
 		id := c.Query("id")
 		page := c.DefaultQuery("page", "0")
@@ -355,9 +355,9 @@ names[first]=thinkerou&names[second]=tianou
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
-	router.POST("/post", func(c *gin.Context) {
+	router.POST("/post", func(c *ginplus.Context) {
 
 		ids := c.QueryMap("ids")
 		names := c.PostFormMap("names")
@@ -384,10 +384,10 @@ References issue [#774](https://github.com/clearcodecn/ginplus/issues/774) and d
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 8 << 20  // 8 MiB
-	router.POST("/upload", func(c *gin.Context) {
+	router.POST("/upload", func(c *ginplus.Context) {
 		// Single file
 		file, _ := c.FormFile("file")
 		log.Println(file.Filename)
@@ -415,10 +415,10 @@ See the detail [example code](https://github.com/gin-gonic/examples/tree/master/
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 8 << 20  // 8 MiB
-	router.POST("/upload", func(c *gin.Context) {
+	router.POST("/upload", func(c *ginplus.Context) {
 		// Multipart form
 		form, _ := c.MultipartForm()
 		files := form.File["upload[]"]
@@ -448,7 +448,7 @@ curl -X POST http://localhost:8080/upload \
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
 	// Simple group: v1
 	v1 := router.Group("/v1")
@@ -475,14 +475,14 @@ func main() {
 Use
 
 ```go
-r := gin.New()
+r := ginplus.New()
 ```
 
 instead of
 
 ```go
 // Default With the Logger and Recovery middleware already attached
-r := gin.Default()
+r := ginplus.Default()
 ```
 
 
@@ -490,15 +490,15 @@ r := gin.Default()
 ```go
 func main() {
 	// Creates a router without any middleware by default
-	r := gin.New()
+	r := ginplus.New()
 
 	// Global middleware
-	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
-	// By default gin.DefaultWriter = os.Stdout
-	r.Use(gin.Logger())
+	// Logger middleware will write the logs to ginplus.DefaultWriter even if you set with GIN_MODE=release.
+	// By default ginplus.DefaultWriter = os.Stdout
+	r.Use(ginplus.Logger())
 
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	r.Use(gin.Recovery())
+	r.Use(ginplus.Recovery())
 
 	// Per route middleware, you can add as many as you desire.
 	r.GET("/benchmark", MyBenchLogger(), benchEndpoint)
@@ -530,27 +530,27 @@ func main() {
 ```go
 func main() {
 	// Creates a router without any middleware by default
-	r := gin.New()
+	r := ginplus.New()
 
 	// Global middleware
-	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
-	// By default gin.DefaultWriter = os.Stdout
-	r.Use(gin.Logger())
+	// Logger middleware will write the logs to ginplus.DefaultWriter even if you set with GIN_MODE=release.
+	// By default ginplus.DefaultWriter = os.Stdout
+	r.Use(ginplus.Logger())
 
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	r.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
+	r.Use(ginplus.CustomRecovery(func(c *ginplus.Context, recovered interface{}) {
 		if err, ok := recovered.(string); ok {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("error: %s", err))
 		}
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}))
 
-	r.GET("/panic", func(c *gin.Context) {
+	r.GET("/panic", func(c *ginplus.Context) {
 		// panic with a string -- the custom middleware could save this to a database or report it to the user
 		panic("foo")
 	})
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", func(c *ginplus.Context) {
 		c.String(http.StatusOK, "ohai")
 	})
 
@@ -563,17 +563,17 @@ func main() {
 ```go
 func main() {
     // Disable Console Color, you don't need console color when writing the logs to file.
-    gin.DisableConsoleColor()
+    ginplus.DisableConsoleColor()
 
     // Logging to a file.
-    f, _ := os.Create("gin.log")
-    gin.DefaultWriter = io.MultiWriter(f)
+    f, _ := os.Create("ginplus.log")
+    ginplus.DefaultWriter = io.MultiWriter(f)
 
     // Use the following code if you need to write the logs to file and console at the same time.
-    // gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+    // ginplus.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
-    router := gin.Default()
-    router.GET("/ping", func(c *gin.Context) {
+    router := ginplus.Default()
+    router.GET("/ping", func(c *ginplus.Context) {
         c.String(http.StatusOK, "pong")
     })
 
@@ -584,11 +584,11 @@ func main() {
 ### Custom Log Format
 ```go
 func main() {
-	router := gin.New()
+	router := ginplus.New()
 
-	// LoggerWithFormatter middleware will write the logs to gin.DefaultWriter
-	// By default gin.DefaultWriter = os.Stdout
-	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+	// LoggerWithFormatter middleware will write the logs to ginplus.DefaultWriter
+	// By default ginplus.DefaultWriter = os.Stdout
+	router.Use(ginplus.LoggerWithFormatter(func(param ginplus.LogFormatterParams) string {
 
 		// your custom format
 		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
@@ -603,9 +603,9 @@ func main() {
 				param.ErrorMessage,
 		)
 	}))
-	router.Use(gin.Recovery())
+	router.Use(ginplus.Recovery())
 
-	router.GET("/ping", func(c *gin.Context) {
+	router.GET("/ping", func(c *ginplus.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
@@ -627,13 +627,13 @@ Never colorize logs:
 ```go
 func main() {
     // Disable log's color
-    gin.DisableConsoleColor()
+    ginplus.DisableConsoleColor()
 
     // Creates a gin router with default middleware:
     // logger and recovery (crash-free) middleware
-    router := gin.Default()
+    router := ginplus.Default()
 
-    router.GET("/ping", func(c *gin.Context) {
+    router.GET("/ping", func(c *ginplus.Context) {
         c.String(http.StatusOK, "pong")
     })
 
@@ -646,13 +646,13 @@ Always colorize logs:
 ```go
 func main() {
     // Force log's color
-    gin.ForceConsoleColor()
+    ginplus.ForceConsoleColor()
 
     // Creates a gin router with default middleware:
     // logger and recovery (crash-free) middleware
-    router := gin.Default()
+    router := ginplus.Default()
 
-    router.GET("/ping", func(c *gin.Context) {
+    router.GET("/ping", func(c *ginplus.Context) {
         c.String(http.StatusOK, "pong")
     })
 
@@ -688,22 +688,22 @@ type Login struct {
 }
 
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
 	// Example for binding JSON ({"user": "manu", "password": "123"})
-	router.POST("/loginJSON", func(c *gin.Context) {
+	router.POST("/loginJSON", func(c *ginplus.Context) {
 		var json Login
 		if err := c.ShouldBindJSON(&json); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, ginplus.H{"error": err.Error()})
 			return
 		}
 
 		if json.User != "manu" || json.Password != "123" {
-			c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+			c.JSON(http.StatusUnauthorized, ginplus.H{"status": "unauthorized"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
+		c.JSON(http.StatusOK, ginplus.H{"status": "you are logged in"})
 	})
 
 	// Example for binding XML (
@@ -712,36 +712,36 @@ func main() {
 	//		<user>manu</user>
 	//		<password>123</password>
 	//	</root>)
-	router.POST("/loginXML", func(c *gin.Context) {
+	router.POST("/loginXML", func(c *ginplus.Context) {
 		var xml Login
 		if err := c.ShouldBindXML(&xml); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, ginplus.H{"error": err.Error()})
 			return
 		}
 
 		if xml.User != "manu" || xml.Password != "123" {
-			c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+			c.JSON(http.StatusUnauthorized, ginplus.H{"status": "unauthorized"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
+		c.JSON(http.StatusOK, ginplus.H{"status": "you are logged in"})
 	})
 
 	// Example for binding a HTML form (user=manu&password=123)
-	router.POST("/loginForm", func(c *gin.Context) {
+	router.POST("/loginForm", func(c *ginplus.Context) {
 		var form Login
 		// This will infer what binder to use depending on the content-type header.
 		if err := c.ShouldBind(&form); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, ginplus.H{"error": err.Error()})
 			return
 		}
 
 		if form.User != "manu" || form.Password != "123" {
-			c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+			c.JSON(http.StatusUnauthorized, ginplus.H{"status": "unauthorized"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
+		c.JSON(http.StatusOK, ginplus.H{"status": "you are logged in"})
 	})
 
 	// Listen and serve on 0.0.0.0:8080
@@ -768,7 +768,7 @@ $ curl -v -X POST \
 < Date: Fri, 04 Aug 2017 03:51:31 GMT
 < Content-Length: 100
 <
-{"error":"Key: 'Login.Password' Error:Field validation for 'Password' failed on the 'required' tag"}
+{"error":"Key: 'Loginplus.Password' Error:Field validation for 'Password' failed on the 'required' tag"}
 ```
 
 **Skip validate**
@@ -809,7 +809,7 @@ var bookableDate validator.Func = func(fl validator.FieldLevel) bool {
 }
 
 func main() {
-	route := gin.Default()
+	route := ginplus.Default()
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("bookabledate", bookableDate)
@@ -819,12 +819,12 @@ func main() {
 	route.Run(":8085")
 }
 
-func getBookable(c *gin.Context) {
+func getBookable(c *ginplus.Context) {
 	var b Booking
 	if err := c.ShouldBindWith(&b, binding.Query); err == nil {
-		c.JSON(http.StatusOK, gin.H{"message": "Booking dates are valid!"})
+		c.JSON(http.StatusOK, ginplus.H{"message": "Booking dates are valid!"})
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, ginplus.H{"error": err.Error()})
 	}
 }
 ```
@@ -863,12 +863,12 @@ type Person struct {
 }
 
 func main() {
-	route := gin.Default()
+	route := ginplus.Default()
 	route.Any("/testing", startPage)
 	route.Run(":8085")
 }
 
-func startPage(c *gin.Context) {
+func startPage(c *ginplus.Context) {
 	var person Person
 	if c.ShouldBindQuery(&person) == nil {
 		log.Println("====== Only Bind By Query String ======")
@@ -904,12 +904,12 @@ type Person struct {
 }
 
 func main() {
-	route := gin.Default()
+	route := ginplus.Default()
 	route.GET("/testing", startPage)
 	route.Run(":8085")
 }
 
-func startPage(c *gin.Context) {
+func startPage(c *ginplus.Context) {
 	var person Person
 	// If `GET`, only `Form` binding engine (`query`) used.
 	// If `POST`, first checks the `content-type` for `JSON` or `XML`, then uses `Form` (`form-data`).
@@ -950,14 +950,14 @@ type Person struct {
 }
 
 func main() {
-	route := gin.Default()
-	route.GET("/:name/:id", func(c *gin.Context) {
+	route := ginplus.Default()
+	route.GET("/:name/:id", func(c *ginplus.Context) {
 		var person Person
 		if err := c.ShouldBindUri(&person); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
+			c.JSON(http.StatusBadRequest, ginplus.H{"msg": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"name": person.Name, "uuid": person.ID})
+		c.JSON(http.StatusOK, ginplus.H{"name": person.Name, "uuid": person.ID})
 	})
 	route.Run(":8088")
 }
@@ -987,8 +987,8 @@ type testHeader struct {
 }
 
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
+	r := ginplus.Default()
+	r.GET("/", func(c *ginplus.Context) {
 		h := testHeader{}
 
 		if err := c.ShouldBindHeader(&h); err != nil {
@@ -996,7 +996,7 @@ func main() {
 		}
 
 		fmt.Printf("%#v\n", h)
-		c.JSON(http.StatusOK, gin.H{"Rate": h.Rate, "Domain": h.Domain})
+		c.JSON(http.StatusOK, ginplus.H{"Rate": h.Rate, "Domain": h.Domain})
 	})
 
 	r.Run()
@@ -1023,10 +1023,10 @@ type myForm struct {
 
 ...
 
-func formHandler(c *gin.Context) {
+func formHandler(c *ginplus.Context) {
     var fakeForm myForm
     c.ShouldBind(&fakeForm)
-    c.JSON(http.StatusOK, gin.H{"color": fakeForm.Colors})
+    c.JSON(http.StatusOK, ginplus.H{"color": fakeForm.Colors})
 }
 
 ...
@@ -1066,8 +1066,8 @@ type ProfileForm struct {
 }
 
 func main() {
-	router := gin.Default()
-	router.POST("/profile", func(c *gin.Context) {
+	router := ginplus.Default()
+	router.POST("/profile", func(c *ginplus.Context) {
 		// you can bind multipart form with explicit binding declaration:
 		// c.ShouldBindWith(&form, binding.Form)
 		// or you can simply use autobinding with ShouldBind method:
@@ -1101,14 +1101,14 @@ $ curl -X POST -v --form name=user --form "avatar=@./avatar.png" http://localhos
 
 ```go
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
-	// gin.H is a shortcut for map[string]interface{}
-	r.GET("/someJSON", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "hey", "status": http.StatusOK})
+	// ginplus.H is a shortcut for map[string]interface{}
+	r.GET("/someJSON", func(c *ginplus.Context) {
+		c.JSON(http.StatusOK, ginplus.H{"message": "hey", "status": http.StatusOK})
 	})
 
-	r.GET("/moreJSON", func(c *gin.Context) {
+	r.GET("/moreJSON", func(c *ginplus.Context) {
 		// You also can use a struct
 		var msg struct {
 			Name    string `json:"user"`
@@ -1123,15 +1123,15 @@ func main() {
 		c.JSON(http.StatusOK, msg)
 	})
 
-	r.GET("/someXML", func(c *gin.Context) {
-		c.XML(http.StatusOK, gin.H{"message": "hey", "status": http.StatusOK})
+	r.GET("/someXML", func(c *ginplus.Context) {
+		c.XML(http.StatusOK, ginplus.H{"message": "hey", "status": http.StatusOK})
 	})
 
-	r.GET("/someYAML", func(c *gin.Context) {
-		c.YAML(http.StatusOK, gin.H{"message": "hey", "status": http.StatusOK})
+	r.GET("/someYAML", func(c *ginplus.Context) {
+		c.YAML(http.StatusOK, ginplus.H{"message": "hey", "status": http.StatusOK})
 	})
 
-	r.GET("/someProtoBuf", func(c *gin.Context) {
+	r.GET("/someProtoBuf", func(c *ginplus.Context) {
 		reps := []int64{int64(1), int64(2)}
 		label := "test"
 		// The specific definition of protobuf is written in the testdata/protoexample file.
@@ -1155,12 +1155,12 @@ Using SecureJSON to prevent json hijacking. Default prepends `"while(1),"` to re
 
 ```go
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
 	// You can also use your own secure json prefix
 	// r.SecureJsonPrefix(")]}',\n")
 
-	r.GET("/someJSON", func(c *gin.Context) {
+	r.GET("/someJSON", func(c *ginplus.Context) {
 		names := []string{"lena", "austin", "foo"}
 
 		// Will output  :   while(1);["lena","austin","foo"]
@@ -1177,10 +1177,10 @@ Using JSONP to request data from a server  in a different domain. Add callback t
 
 ```go
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
-	r.GET("/JSONP", func(c *gin.Context) {
-		data := gin.H{
+	r.GET("/JSONP", func(c *ginplus.Context) {
+		data := ginplus.H{
 			"foo": "bar",
 		}
 
@@ -1203,10 +1203,10 @@ Using AsciiJSON to Generates ASCII-only JSON with escaped non-ASCII characters.
 
 ```go
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
-	r.GET("/someJSON", func(c *gin.Context) {
-		data := gin.H{
+	r.GET("/someJSON", func(c *ginplus.Context) {
+		data := ginplus.H{
 			"lang": "GO语言",
 			"tag":  "<br>",
 		}
@@ -1227,18 +1227,18 @@ This feature is unavailable in Go 1.6 and lower.
 
 ```go
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
 	// Serves unicode entities
-	r.GET("/json", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	r.GET("/json", func(c *ginplus.Context) {
+		c.JSON(http.StatusOK, ginplus.H{
 			"html": "<b>Hello, world!</b>",
 		})
 	})
 
 	// Serves literal characters
-	r.GET("/purejson", func(c *gin.Context) {
-		c.PureJSON(http.StatusOK, gin.H{
+	r.GET("/purejson", func(c *ginplus.Context) {
+		c.PureJSON(http.StatusOK, ginplus.H{
 			"html": "<b>Hello, world!</b>",
 		})
 	})
@@ -1252,7 +1252,7 @@ func main() {
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	router.Static("/assets", "./assets")
 	router.StaticFS("/more_static", http.Dir("my_file_system"))
 	router.StaticFile("/favicon.ico", "./resources/favicon.ico")
@@ -1267,14 +1267,14 @@ func main() {
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
-	router.GET("/local/file", func(c *gin.Context) {
+	router.GET("/local/file", func(c *ginplus.Context) {
 		c.File("local/file.go")
 	})
 
 	var fs http.FileSystem = // ...
-	router.GET("/fs/file", func(c *gin.Context) {
+	router.GET("/fs/file", func(c *ginplus.Context) {
 		c.FileFromFS("fs/file.go", fs)
 	})
 }
@@ -1285,8 +1285,8 @@ func main() {
 
 ```go
 func main() {
-	router := gin.Default()
-	router.GET("/someDataFromReader", func(c *gin.Context) {
+	router := ginplus.Default()
+	router.GET("/someDataFromReader", func(c *ginplus.Context) {
 		response, err := http.Get("https://raw.githubusercontent.com/gin-gonic/logo/master/color.png")
 		if err != nil || response.StatusCode != http.StatusOK {
 			c.Status(http.StatusServiceUnavailable)
@@ -1314,11 +1314,11 @@ Using LoadHTMLGlob() or LoadHTMLFiles()
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	router.LoadHTMLGlob("templates/*")
 	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html")
-	router.GET("/index", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+	router.GET("/index", func(c *ginplus.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", ginplus.H{
 			"title": "Main website",
 		})
 	})
@@ -1340,15 +1340,15 @@ Using templates with same name in different directories
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	router.LoadHTMLGlob("templates/**/*")
-	router.GET("/posts/index", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{
+	router.GET("/posts/index", func(c *ginplus.Context) {
+		c.HTML(http.StatusOK, "posts/index.tmpl", ginplus.H{
 			"title": "Posts",
 		})
 	})
-	router.GET("/users/index", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "users/index.tmpl", gin.H{
+	router.GET("/users/index", func(c *ginplus.Context) {
+		c.HTML(http.StatusOK, "users/index.tmpl", ginplus.H{
 			"title": "Users",
 		})
 	})
@@ -1388,7 +1388,7 @@ You can also use your own html template render
 import "html/template"
 
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	html := template.Must(template.ParseFiles("file1", "file2"))
 	router.SetHTMLTemplate(html)
 	router.Run(":8080")
@@ -1400,7 +1400,7 @@ func main() {
 You may use custom delims
 
 ```go
-	r := gin.Default()
+	r := ginplus.Default()
 	r.Delims("{[{", "}]}")
 	r.LoadHTMLGlob("/path/to/templates")
 ```
@@ -1427,15 +1427,15 @@ func formatAsDate(t time.Time) string {
 }
 
 func main() {
-    router := gin.Default()
+    router := ginplus.Default()
     router.Delims("{[{", "}]}")
     router.SetFuncMap(template.FuncMap{
         "formatAsDate": formatAsDate,
     })
     router.LoadHTMLFiles("./testdata/template/raw.tmpl")
 
-    router.GET("/raw", func(c *gin.Context) {
-        c.HTML(http.StatusOK, "raw.tmpl", gin.H{
+    router.GET("/raw", func(c *ginplus.Context) {
+        c.HTML(http.StatusOK, "raw.tmpl", ginplus.H{
             "now": time.Date(2017, 07, 01, 0, 0, 0, 0, time.UTC),
         })
     })
@@ -1465,14 +1465,14 @@ Gin allow by default use only one html.Template. Check [a multitemplate render](
 Issuing a HTTP redirect is easy. Both internal and external locations are supported.
 
 ```go
-r.GET("/test", func(c *gin.Context) {
+r.GET("/test", func(c *ginplus.Context) {
 	c.Redirect(http.StatusMovedPermanently, "http://www.google.com/")
 })
 ```
 
 Issuing a HTTP redirect from POST. Refer to issue: [#444](https://github.com/clearcodecn/ginplus/issues/444)
 ```go
-r.POST("/test", func(c *gin.Context) {
+r.POST("/test", func(c *ginplus.Context) {
 	c.Redirect(http.StatusFound, "/foo")
 })
 ```
@@ -1480,12 +1480,12 @@ r.POST("/test", func(c *gin.Context) {
 Issuing a Router redirect, use `HandleContext` like below.
 
 ``` go
-r.GET("/test", func(c *gin.Context) {
+r.GET("/test", func(c *ginplus.Context) {
     c.Request.URL.Path = "/test2"
     r.HandleContext(c)
 })
-r.GET("/test2", func(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{"hello": "world"})
+r.GET("/test2", func(c *ginplus.Context) {
+    c.JSON(http.StatusOK, ginplus.H{"hello": "world"})
 })
 ```
 
@@ -1493,8 +1493,8 @@ r.GET("/test2", func(c *gin.Context) {
 ### Custom Middleware
 
 ```go
-func Logger() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func Logger() ginplus.HandlerFunc {
+	return func(c *ginplus.Context) {
 		t := time.Now()
 
 		// Set example variable
@@ -1515,10 +1515,10 @@ func Logger() gin.HandlerFunc {
 }
 
 func main() {
-	r := gin.New()
+	r := ginplus.New()
 	r.Use(Logger())
 
-	r.GET("/test", func(c *gin.Context) {
+	r.GET("/test", func(c *ginplus.Context) {
 		example := c.MustGet("example").(string)
 
 		// it would print: "12345"
@@ -1534,18 +1534,18 @@ func main() {
 
 ```go
 // simulate some private data
-var secrets = gin.H{
-	"foo":    gin.H{"email": "foo@bar.com", "phone": "123433"},
-	"austin": gin.H{"email": "austin@example.com", "phone": "666"},
-	"lena":   gin.H{"email": "lena@guapa.com", "phone": "523443"},
+var secrets = ginplus.H{
+	"foo":    ginplus.H{"email": "foo@bar.com", "phone": "123433"},
+	"austin": ginplus.H{"email": "austin@example.com", "phone": "666"},
+	"lena":   ginplus.H{"email": "lena@guapa.com", "phone": "523443"},
 }
 
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
-	// Group using gin.BasicAuth() middleware
-	// gin.Accounts is a shortcut for map[string]string
-	authorized := r.Group("/admin", gin.BasicAuth(gin.Accounts{
+	// Group using ginplus.BasicAuth() middleware
+	// ginplus.Accounts is a shortcut for map[string]string
+	authorized := r.Group("/admin", ginplus.BasicAuth(ginplus.Accounts{
 		"foo":    "bar",
 		"austin": "1234",
 		"lena":   "hello2",
@@ -1554,13 +1554,13 @@ func main() {
 
 	// /admin/secrets endpoint
 	// hit "localhost:8080/admin/secrets
-	authorized.GET("/secrets", func(c *gin.Context) {
+	authorized.GET("/secrets", func(c *ginplus.Context) {
 		// get user, it was set by the BasicAuth middleware
-		user := c.MustGet(gin.AuthUserKey).(string)
+		user := c.MustGet(ginplus.AuthUserKey).(string)
 		if secret, ok := secrets[user]; ok {
-			c.JSON(http.StatusOK, gin.H{"user": user, "secret": secret})
+			c.JSON(http.StatusOK, ginplus.H{"user": user, "secret": secret})
 		} else {
-			c.JSON(http.StatusOK, gin.H{"user": user, "secret": "NO SECRET :("})
+			c.JSON(http.StatusOK, ginplus.H{"user": user, "secret": "NO SECRET :("})
 		}
 	})
 
@@ -1575,9 +1575,9 @@ When starting new Goroutines inside a middleware or handler, you **SHOULD NOT** 
 
 ```go
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
-	r.GET("/long_async", func(c *gin.Context) {
+	r.GET("/long_async", func(c *ginplus.Context) {
 		// create copy to be used inside the goroutine
 		cCp := c.Copy()
 		go func() {
@@ -1589,7 +1589,7 @@ func main() {
 		}()
 	})
 
-	r.GET("/long_sync", func(c *gin.Context) {
+	r.GET("/long_sync", func(c *ginplus.Context) {
 		// simulate a long task with time.Sleep(). 5 seconds
 		time.Sleep(5 * time.Second)
 
@@ -1608,7 +1608,7 @@ Use `http.ListenAndServe()` directly, like this:
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 	http.ListenAndServe(":8080", router)
 }
 ```
@@ -1616,7 +1616,7 @@ or
 
 ```go
 func main() {
-	router := gin.Default()
+	router := ginplus.Default()
 
 	s := &http.Server{
 		Addr:           ":8080",
@@ -1645,10 +1645,10 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
 	// Ping handler
-	r.GET("/ping", func(c *gin.Context) {
+	r.GET("/ping", func(c *ginplus.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
@@ -1671,10 +1671,10 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 
 	// Ping handler
-	r.GET("/ping", func(c *gin.Context) {
+	r.GET("/ping", func(c *ginplus.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
@@ -1709,12 +1709,12 @@ var (
 )
 
 func router01() http.Handler {
-	e := gin.New()
-	e.Use(gin.Recovery())
-	e.GET("/", func(c *gin.Context) {
+	e := ginplus.New()
+	e.Use(ginplus.Recovery())
+	e.GET("/", func(c *ginplus.Context) {
 		c.JSON(
 			http.StatusOK,
-			gin.H{
+			ginplus.H{
 				"code":  http.StatusOK,
 				"error": "Welcome server 01",
 			},
@@ -1725,12 +1725,12 @@ func router01() http.Handler {
 }
 
 func router02() http.Handler {
-	e := gin.New()
-	e.Use(gin.Recovery())
-	e.GET("/", func(c *gin.Context) {
+	e := ginplus.New()
+	e.Use(ginplus.Recovery())
+	e.GET("/", func(c *ginplus.Context) {
 		c.JSON(
 			http.StatusOK,
-			gin.H{
+			ginplus.H{
 				"code":  http.StatusOK,
 				"error": "Welcome server 02",
 			},
@@ -1786,7 +1786,7 @@ There are a few approaches you can use to perform a graceful shutdown or restart
 We can use [fvbock/endless](https://github.com/fvbock/endless) to replace the default `ListenAndServe`. Refer to issue [#296](https://github.com/clearcodecn/ginplus/issues/296) for more details.
 
 ```go
-router := gin.Default()
+router := ginplus.Default()
 router.GET("/", handler)
 // [...]
 endless.ListenAndServe(":4242", router)
@@ -1820,8 +1820,8 @@ import (
 )
 
 func main() {
-	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
+	router := ginplus.Default()
+	router.GET("/", func(c *ginplus.Context) {
 		time.Sleep(5 * time.Second)
 		c.String(http.StatusOK, "Welcome Gin Server")
 	})
@@ -1870,7 +1870,7 @@ You can build a server into a single binary containing templates by using [go-as
 
 ```go
 func main() {
-	r := gin.New()
+	r := ginplus.New()
 
 	t, err := loadTemplate()
 	if err != nil {
@@ -1878,7 +1878,7 @@ func main() {
 	}
 	r.SetHTMLTemplate(t)
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", func(c *ginplus.Context) {
 		c.HTML(http.StatusOK, "/html/index.tmpl",nil)
 	})
 	r.Run(":8080")
@@ -1933,35 +1933,35 @@ type StructD struct {
     FieldD string `form:"field_d"`
 }
 
-func GetDataB(c *gin.Context) {
+func GetDataB(c *ginplus.Context) {
     var b StructB
     c.Bind(&b)
-    c.JSON(http.StatusOK, gin.H{
+    c.JSON(http.StatusOK, ginplus.H{
         "a": b.NestedStruct,
         "b": b.FieldB,
     })
 }
 
-func GetDataC(c *gin.Context) {
+func GetDataC(c *ginplus.Context) {
     var b StructC
     c.Bind(&b)
-    c.JSON(http.StatusOK, gin.H{
+    c.JSON(http.StatusOK, ginplus.H{
         "a": b.NestedStructPointer,
         "c": b.FieldC,
     })
 }
 
-func GetDataD(c *gin.Context) {
+func GetDataD(c *ginplus.Context) {
     var b StructD
     c.Bind(&b)
-    c.JSON(http.StatusOK, gin.H{
+    c.JSON(http.StatusOK, ginplus.H{
         "x": b.NestedAnonyStruct,
         "d": b.FieldD,
     })
 }
 
 func main() {
-    r := gin.Default()
+    r := ginplus.Default()
     r.GET("/getb", GetDataB)
     r.GET("/getc", GetDataC)
     r.GET("/getd", GetDataD)
@@ -1995,7 +1995,7 @@ type formB struct {
   Bar string `json:"bar" xml:"bar" binding:"required"`
 }
 
-func SomeHandler(c *gin.Context) {
+func SomeHandler(c *ginplus.Context) {
   objA := formA{}
   objB := formB{}
   // This c.ShouldBind consumes c.Request.Body and it cannot be reused.
@@ -2013,7 +2013,7 @@ func SomeHandler(c *gin.Context) {
 For this, you can use `c.ShouldBindBodyWith`.
 
 ```go
-func SomeHandler(c *gin.Context) {
+func SomeHandler(c *ginplus.Context) {
   objA := formA{}
   objB := formB{}
   // This reads c.Request.Body and stores the result into the context.
@@ -2081,8 +2081,8 @@ type FormA struct {
 	FieldA string `url:"field_a"`
 }
 
-func ListHandler(s *Service) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
+func ListHandler(s *Service) func(ctx *ginplus.Context) {
+	return func(ctx *ginplus.Context) {
 		var urlBinding = customerBinding{}
 		var opt FormA
 		err := ctx.MustBindWith(&opt, urlBinding)
@@ -2122,18 +2122,18 @@ var html = template.Must(template.New("https").Parse(`
 `))
 
 func main() {
-	r := gin.Default()
+	r := ginplus.Default()
 	r.Static("/assets", "./assets")
 	r.SetHTMLTemplate(html)
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", func(c *ginplus.Context) {
 		if pusher := c.Writer.Pusher(); pusher != nil {
 			// use pusher.Push() to do server push
 			if err := pusher.Push("/assets/app.js", nil); err != nil {
 				log.Printf("Failed to push: %v", err)
 			}
 		}
-		c.HTML(http.StatusOK, "https", gin.H{
+		c.HTML(http.StatusOK, "https", ginplus.H{
 			"status": "success",
 		})
 	})
@@ -2152,7 +2152,7 @@ The default log of routes is:
 [GIN-debug] GET    /status                   --> main.main.func3 (3 handlers)
 ```
 
-If you want to log this information in given format (e.g. JSON, key values or something else), then you can define this format with `gin.DebugPrintRouteFunc`.
+If you want to log this information in given format (e.g. JSON, key values or something else), then you can define this format with `ginplus.DebugPrintRouteFunc`.
 In the example below, we log all routes with standard log package but you can use another log tools that suits of your needs.
 ```go
 import (
@@ -2163,20 +2163,20 @@ import (
 )
 
 func main() {
-	r := gin.Default()
-	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+	r := ginplus.Default()
+	ginplus.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
 		log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
 	}
 
-	r.POST("/foo", func(c *gin.Context) {
+	r.POST("/foo", func(c *ginplus.Context) {
 		c.JSON(http.StatusOK, "foo")
 	})
 
-	r.GET("/bar", func(c *gin.Context) {
+	r.GET("/bar", func(c *ginplus.Context) {
 		c.JSON(http.StatusOK, "bar")
 	})
 
-	r.GET("/status", func(c *gin.Context) {
+	r.GET("/status", func(c *ginplus.Context) {
 		c.JSON(http.StatusOK, "ok")
 	})
 
@@ -2196,9 +2196,9 @@ import (
 
 func main() {
 
-    router := gin.Default()
+    router := ginplus.Default()
 
-    router.GET("/cookie", func(c *gin.Context) {
+    router.GET("/cookie", func(c *ginplus.Context) {
 
         cookie, err := c.Cookie("gin_cookie")
 
@@ -2220,7 +2220,7 @@ Gin lets you specify which headers to hold the real client IP (if any),
 as well as specifying which proxies (or direct clients) you trust to
 specify one of these headers.
 
-Use function `SetTrustedProxies()` on your `gin.Engine` to specify network addresses
+Use function `SetTrustedProxies()` on your `ginplus.Engine` to specify network addresses
 or network CIDRs from where clients which their request headers related to client
 IP can be trusted. They can be IPv4 addresses, IPv4 CIDRs, IPv6 addresses or
 IPv6 CIDRs.
@@ -2240,10 +2240,10 @@ import (
 
 func main() {
 
-	router := gin.Default()
+	router := ginplus.Default()
 	router.SetTrustedProxies([]string{"192.168.1.2"})
 
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/", func(c *ginplus.Context) {
 		// If the client is 192.168.1.2, use the X-Forwarded-For
 		// header to deduce the original client IP from the trust-
 		// worthy parts of that header.
@@ -2266,14 +2266,14 @@ import (
 
 func main() {
 
-	router := gin.Default()
-	// Use predefined header gin.PlatformXXX
-	router.TrustedPlatform = gin.PlatformGoogleAppEngine
+	router := ginplus.Default()
+	// Use predefined header ginplus.PlatformXXX
+	router.TrustedPlatform = ginplus.PlatformGoogleAppEngine
 	// Or set your own trusted request header for another trusted proxy service
 	// Don't set it to any suspect request header, it's unsafe
 	router.TrustedPlatform = "X-CDN-IP"
 
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/", func(c *ginplus.Context) {
 		// If you set TrustedPlatform, ClientIP() will resolve the
 		// corresponding header and return IP directly
 		fmt.Printf("ClientIP: %s\n", c.ClientIP())
@@ -2295,9 +2295,9 @@ import (
 	"github.com/clearcodecn/ginplus"
 )
 
-func setupRouter() *gin.Engine {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
+func setupRouter() *ginplus.Engine {
+	r := ginplus.Default()
+	r.GET("/ping", func(c *ginplus.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 	return r

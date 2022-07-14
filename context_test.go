@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"bytes"
@@ -850,7 +850,7 @@ func TestContextRenderHTML2(t *testing.T) {
 		SetMode(TestMode)
 	})
 
-	assert.Equal(t, "[GIN-debug] [WARNING] Since SetHTMLTemplate() is NOT thread-safe. It should only be called\nat initialization. ie. before any route is registered or the router is listening in a socket:\n\n\trouter := gin.Default()\n\trouter.SetHTMLTemplate(template) // << good place\n\n", re)
+	assert.Equal(t, "[GIN-debug] [WARNING] Since SetHTMLTemplate() is NOT thread-safe. It should only be called\nat initialization. ie. before any route is registered or the router is listening in a socket:\n\n\trouter := ginplus.Default()\n\trouter.SetHTMLTemplate(template) // << good place\n\n", re)
 
 	c.HTML(http.StatusCreated, "t", H{"name": "alexandernyquist"})
 
@@ -997,7 +997,7 @@ func TestContextRenderFile(t *testing.T) {
 	c, _ := CreateTestContext(w)
 
 	c.Request, _ = http.NewRequest("GET", "/", nil)
-	c.File("./gin.go")
+	c.File("./ginplus.go")
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Contains(t, w.Body.String(), "func New() *Engine {")
@@ -1011,7 +1011,7 @@ func TestContextRenderFileFromFS(t *testing.T) {
 	c, _ := CreateTestContext(w)
 
 	c.Request, _ = http.NewRequest("GET", "/some/path", nil)
-	c.FileFromFS("./gin.go", Dir(".", false))
+	c.FileFromFS("./ginplus.go", Dir(".", false))
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Contains(t, w.Body.String(), "func New() *Engine {")
@@ -1027,7 +1027,7 @@ func TestContextRenderAttachment(t *testing.T) {
 	newFilename := "new_filename.go"
 
 	c.Request, _ = http.NewRequest("GET", "/", nil)
-	c.FileAttachment("./gin.go", newFilename)
+	c.FileAttachment("./ginplus.go", newFilename)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "func New() *Engine {")
@@ -1040,7 +1040,7 @@ func TestContextRenderUTF8Attachment(t *testing.T) {
 	newFilename := "new🧡_filename.go"
 
 	c.Request, _ = http.NewRequest("GET", "/", nil)
-	c.FileAttachment("./gin.go", newFilename)
+	c.FileAttachment("./ginplus.go", newFilename)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "func New() *Engine {")

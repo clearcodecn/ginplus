@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"errors"
@@ -110,12 +110,12 @@ type TestErr string
 
 func (e TestErr) Error() string { return string(e) }
 
-// TestErrorUnwrap tests the behavior of gin.Error with "errors.Is()" and "errors.As()".
+// TestErrorUnwrap tests the behavior of ginplus.Error with "errors.Is()" and "errors.As()".
 // "errors.Is()" and "errors.As()" have been added to the standard library in go 1.13.
 func TestErrorUnwrap(t *testing.T) {
 	innerErr := TestErr("some error")
 
-	// 2 layers of wrapping : use 'fmt.Errorf("%w")' to wrap a gin.Error{}, which itself wraps innerErr
+	// 2 layers of wrapping : use 'fmt.Errorf("%w")' to wrap a ginplus.Error{}, which itself wraps innerErr
 	err := fmt.Errorf("wrapped: %w", &Error{
 		Err:  innerErr,
 		Type: ErrorTypeAny,

@@ -11,7 +11,7 @@
 ## Break Changes
 
 * TrustedProxies: Add default IPv6 support and refactor [#2967](https://github.com/clearcodecn/ginplus/pull/2967). Please replace `RemoteIP() (net.IP, bool)` with `RemoteIP() net.IP`
-* gin.Context with fallback value from gin.Context.Request.Context() [#2751](https://github.com/clearcodecn/ginplus/pull/2751)
+* ginplus.Context with fallback value from ginplus.Context.Request.Context() [#2751](https://github.com/clearcodecn/ginplus/pull/2751)
 
 ### BUGFIXES
 
@@ -118,7 +118,7 @@
 * Add CustomRecovery builtin middleware ([#2322](https://github.com/clearcodecn/ginplus/pull/2322))
 * binding: avoid 2038 problem on 32-bit architectures ([#2450](https://github.com/clearcodecn/ginplus/pull/2450))
 * Prevent panic in Context.GetQuery() when there is no Request ([#2412](https://github.com/clearcodecn/ginplus/pull/2412))
-* Add GetUint and GetUint64 method on gin.context ([#2487](https://github.com/clearcodecn/ginplus/pull/2487))
+* Add GetUint and GetUint64 method on ginplus.context ([#2487](https://github.com/clearcodecn/ginplus/pull/2487))
 * update content-disposition header to MIME-style ([#2512](https://github.com/clearcodecn/ginplus/pull/2512))
 * reduce allocs and improve the render `WriteString` ([#2508](https://github.com/clearcodecn/ginplus/pull/2508))
 * implement ".Unwrap() error" on Error type ([#2525](https://github.com/clearcodecn/ginplus/pull/2525)) ([#2526](https://github.com/clearcodecn/ginplus/pull/2526))
@@ -176,7 +176,7 @@
   * tree: sync part httprouter codes and reduce if/else [#2163](https://github.com/clearcodecn/ginplus/pull/2163)
   * use http method constant [#2155](https://github.com/clearcodecn/ginplus/pull/2155)
   * upgrade go-validator to v10 [#2149](https://github.com/clearcodecn/ginplus/pull/2149)
-  * Refactor redirect request in gin.go [#1970](https://github.com/clearcodecn/ginplus/pull/1970)
+  * Refactor redirect request in ginplus.go [#1970](https://github.com/clearcodecn/ginplus/pull/1970)
   * Add build tag nomsgpack [#1852](https://github.com/clearcodecn/ginplus/pull/1852)
 ### DOCS
   * docs(path): improve comments [#2223](https://github.com/clearcodecn/ginplus/pull/2223)
@@ -377,7 +377,7 @@
 - [FIX] Context.IsAborted()
 - [FIX] More unit tests
 - [FIX] JSON, XML, HTML renders accept custom content-types
-- [FIX] gin.AbortIndex is unexported
+- [FIX] ginplus.AbortIndex is unexported
 - [FIX] Better approach to avoid directory listing in StaticFS()
 - [FIX] Context.ClientIP() always returns the IP with trimmed spaces.
 - [FIX] Better warning when running in debug mode.
@@ -398,7 +398,7 @@
 - [NEW] Refactored rendering pipeline (faster and static typed)
 - [NEW] Refactored errors API
 - [NEW] IndentedJSON() prints pretty JSON
-- [NEW] Added gin.DefaultWriter
+- [NEW] Added ginplus.DefaultWriter
 - [NEW] UNIX socket support
 - [NEW] RouterGroup.BasePath is exposed
 - [NEW] JSON validation using go-validate-yourself (very powerful options)
@@ -479,8 +479,8 @@
 - [PERFORMANCE] Using sync.Pool to allocatio/gc overhead
 - [NEW] Travis CI integration
 - [NEW] Completely new logger
-- [NEW] New API for serving static files. gin.Static()
-- [NEW] gin.H() can be serialized into XML
+- [NEW] New API for serving static files. ginplus.Static()
+- [NEW] ginplus.H() can be serialized into XML
 - [NEW] Typed errors. Errors can be typed. Internet/external/custom.
 - [NEW] Support for Godeps
 - [NEW] Travis/Godocs badges in README

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"encoding/xml"
@@ -23,7 +23,7 @@ func Bind(val any) HandlerFunc {
 	value := reflect.ValueOf(val)
 	if value.Kind() == reflect.Ptr {
 		panic(`Bind struct can not be a pointer. Example:
-	Use: gin.Bind(Struct{}) instead of gin.Bind(&Struct{})
+	Use: ginplus.Bind(Struct{}) instead of ginplus.Bind(&Struct{})
 `)
 	}
 	typ := value.Type()

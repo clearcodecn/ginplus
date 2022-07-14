@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"bytes"
@@ -93,7 +93,7 @@ func TestDebugPrintWARNINGSetHTMLTemplate(t *testing.T) {
 		debugPrintWARNINGSetHTMLTemplate()
 		SetMode(TestMode)
 	})
-	assert.Equal(t, "[GIN-debug] [WARNING] Since SetHTMLTemplate() is NOT thread-safe. It should only be called\nat initialization. ie. before any route is registered or the router is listening in a socket:\n\n\trouter := gin.Default()\n\trouter.SetHTMLTemplate(template) // << good place\n\n", re)
+	assert.Equal(t, "[GIN-debug] [WARNING] Since SetHTMLTemplate() is NOT thread-safe. It should only be called\nat initialization. ie. before any route is registered or the router is listening in a socket:\n\n\trouter := ginplus.Default()\n\trouter.SetHTMLTemplate(template) // << good place\n\n", re)
 }
 
 func TestDebugPrintWARNINGDefault(t *testing.T) {
@@ -116,7 +116,7 @@ func TestDebugPrintWARNINGNew(t *testing.T) {
 		debugPrintWARNINGNew()
 		SetMode(TestMode)
 	})
-	assert.Equal(t, "[GIN-debug] [WARNING] Running in \"debug\" mode. Switch to \"release\" mode in production.\n - using env:\texport GIN_MODE=release\n - using code:\tgin.SetMode(gin.ReleaseMode)\n\n", re)
+	assert.Equal(t, "[GIN-debug] [WARNING] Running in \"debug\" mode. Switch to \"release\" mode in production.\n - using env:\texport GIN_MODE=release\n - using code:\tginplus.SetMode(ginplus.ReleaseMode)\n\n", re)
 }
 
 func captureOutput(t *testing.T, f func()) string {

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"fmt"
@@ -107,13 +107,13 @@ type Engine struct {
 	HandleMethodNotAllowed bool
 
 	// ForwardedByClientIP if enabled, client IP will be parsed from the request's headers that
-	// match those stored at `(*gin.Engine).RemoteIPHeaders`. If no IP was
+	// match those stored at `(*ginplus.Engine).RemoteIPHeaders`. If no IP was
 	// fetched, it falls back to the IP obtained from
-	// `(*gin.Context).Request.RemoteAddr`.
+	// `(*ginplus.Context).Request.RemoteAddr`.
 	ForwardedByClientIP bool
 
 	// AppEngine was deprecated.
-	// Deprecated: USE `TrustedPlatform` WITH VALUE `gin.PlatformGoogleAppEngine` INSTEAD
+	// Deprecated: USE `TrustedPlatform` WITH VALUE `ginplus.PlatformGoogleAppEngine` INSTEAD
 	// #726 #755 If enabled, it will trust some headers starting with
 	// 'X-AppEngine...' for better integration with that PaaS.
 	AppEngine bool
@@ -131,12 +131,12 @@ type Engine struct {
 	RemoveExtraSlash bool
 
 	// RemoteIPHeaders list of headers used to obtain the client IP when
-	// `(*gin.Engine).ForwardedByClientIP` is `true` and
-	// `(*gin.Context).Request.RemoteAddr` is matched by at least one of the
-	// network origins of list defined by `(*gin.Engine).SetTrustedProxies()`.
+	// `(*ginplus.Engine).ForwardedByClientIP` is `true` and
+	// `(*ginplus.Context).Request.RemoteAddr` is matched by at least one of the
+	// network origins of list defined by `(*ginplus.Engine).SetTrustedProxies()`.
 	RemoteIPHeaders []string
 
-	// TrustedPlatform if set to a constant of value gin.Platform*, trusts the headers set by
+	// TrustedPlatform if set to a constant of value ginplus.Platform*, trusts the headers set by
 	// that platform, for example to determine the client IP
 	TrustedPlatform string
 
@@ -417,7 +417,7 @@ func (engine *Engine) prepareTrustedCIDRs() ([]*net.IPNet, error) {
 // SetTrustedProxies set a list of network origins (IPv4 addresses,
 // IPv4 CIDRs, IPv6 addresses or IPv6 CIDRs) from which to trust
 // request's headers that contain alternative client IP when
-// `(*gin.Engine).ForwardedByClientIP` is `true`. `TrustedProxies`
+// `(*ginplus.Engine).ForwardedByClientIP` is `true`. `TrustedProxies`
 // feature is enabled by default, and it also trusts all proxies
 // by default. If you want to disable this feature, use
 // Engine.SetTrustedProxies(nil), then Context.ClientIP() will

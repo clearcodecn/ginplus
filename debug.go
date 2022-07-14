@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ import (
 const ginSupportMinGoVer = 15
 
 // IsDebugging returns true if the framework is running in debug mode.
-// Use SetMode(gin.ReleaseMode) to disable debug mode.
+// Use SetMode(ginplus.ReleaseMode) to disable debug mode.
 func IsDebugging() bool {
 	return ginMode == debugCode
 }
@@ -79,7 +79,7 @@ func debugPrintWARNINGDefault() {
 func debugPrintWARNINGNew() {
 	debugPrint(`[WARNING] Running in "debug" mode. Switch to "release" mode in production.
  - using env:	export GIN_MODE=release
- - using code:	gin.SetMode(gin.ReleaseMode)
+ - using code:	ginplus.SetMode(ginplus.ReleaseMode)
 
 `)
 }
@@ -88,7 +88,7 @@ func debugPrintWARNINGSetHTMLTemplate() {
 	debugPrint(`[WARNING] Since SetHTMLTemplate() is NOT thread-safe. It should only be called
 at initialization. ie. before any route is registered or the router is listening in a socket:
 
-	router := gin.Default()
+	router := ginplus.Default()
 	router.SetHTMLTemplate(template) // << good place
 
 `)

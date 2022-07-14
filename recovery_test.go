@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"bytes"
@@ -96,7 +96,7 @@ func TestSource(t *testing.T) {
 
 	in := [][]byte{
 		[]byte("Hello world."),
-		[]byte("Hi, gin.."),
+		[]byte("Hi, ginplus.."),
 	}
 	bs = source(in, 10)
 	assert.Equal(t, dunno, bs)

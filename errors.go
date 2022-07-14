@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"fmt"
@@ -96,7 +96,7 @@ func (msg *Error) Unwrap() error {
 }
 
 // ByType returns a readonly copy filtered the byte.
-// ie ByType(gin.ErrorTypePublic) returns a slice of errors with type=ErrorTypePublic.
+// ie ByType(ginplus.ErrorTypePublic) returns a slice of errors with type=ErrorTypePublic.
 func (a errorMsgs) ByType(typ ErrorType) errorMsgs {
 	if len(a) == 0 {
 		return nil

@@ -18,8 +18,8 @@ import (
 )
 
 func main() {
-	g := gin.Default()
-	g.GET("/hello/:name", func(c *gin.Context) {
+	g := ginplus.Default()
+	g.GET("/hello/:name", func(c *ginplus.Context) {
 		c.String(200, "Hello %s", c.Param("name"))
 	})
 	g.Run(":9000")

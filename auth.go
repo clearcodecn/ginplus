@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"crypto/subtle"
@@ -59,7 +59,7 @@ func BasicAuthForRealm(accounts Accounts, realm string) HandlerFunc {
 		}
 
 		// The user credentials was found, set user's id to key AuthUserKey in this context, the user's id can be read later using
-		// c.MustGet(gin.AuthUserKey).
+		// c.MustGet(ginplus.AuthUserKey).
 		c.Set(AuthUserKey, user)
 	}
 }

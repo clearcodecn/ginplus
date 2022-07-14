@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"context"
@@ -47,7 +47,7 @@ const ContextKey = "_gin-gonic/gin/contextkey"
 // abortIndex represents a typical value used in abort functions.
 const abortIndex int8 = math.MaxInt8 >> 1
 
-// Context is the most important part of gin. It allows us to pass variables between middleware,
+// Context is the most important part of ginplus. It allows us to pass variables between middleware,
 // manage the flow, validate the JSON of a request and render a JSON response for example.
 type Context struct {
 	writermem responseWriter
@@ -154,7 +154,7 @@ func (c *Context) Handler() HandlerFunc {
 
 // FullPath returns a matched route full path. For not found routes
 // returns an empty string.
-//     router.GET("/user/:id", func(c *gin.Context) {
+//     router.GET("/user/:id", func(c *ginplus.Context) {
 //         c.FullPath() == "/user/:id" // true
 //     })
 func (c *Context) FullPath() string {
@@ -376,7 +376,7 @@ func (c *Context) GetStringMapStringSlice(key string) (smss map[string][]string)
 
 // Param returns the value of the URL param.
 // It is a shortcut for c.Params.ByName(key)
-//     router.GET("/user/:id", func(c *gin.Context) {
+//     router.GET("/user/:id", func(c *ginplus.Context) {
 //         // a GET request to /user/john
 //         id := c.Param("id") // id == "john"
 //     })
@@ -758,7 +758,7 @@ func (c *Context) ClientIP() string {
 
 	// Legacy "AppEngine" flag
 	if c.engine.AppEngine {
-		log.Println(`The AppEngine flag is going to be deprecated. Please check issues #2723 and #2739 and use 'TrustedPlatform: gin.PlatformGoogleAppEngine' instead.`)
+		log.Println(`The AppEngine flag is going to be deprecated. Please check issues #2723 and #2739 and use 'TrustedPlatform: ginplus.PlatformGoogleAppEngine' instead.`)
 		if addr := c.requestHeader("X-Appengine-Remote-Addr"); addr != "" {
 			return addr
 		}

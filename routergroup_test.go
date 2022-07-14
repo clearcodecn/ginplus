@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"net/http"
@@ -48,7 +48,7 @@ func performRequestInGroup(t *testing.T, method string) {
 	assert.Equal(t, "/v1", v1.BasePath())
 
 	login := v1.Group("/login/", func(c *Context) {}, func(c *Context) {})
-	assert.Equal(t, "/v1/login/", login.BasePath())
+	assert.Equal(t, "/v1/login/", loginplus.BasePath())
 
 	handler := func(c *Context) {
 		c.String(http.StatusBadRequest, "the method was %s and index %d", c.Request.Method, c.index)
@@ -57,25 +57,25 @@ func performRequestInGroup(t *testing.T, method string) {
 	switch method {
 	case http.MethodGet:
 		v1.GET("/test", handler)
-		login.GET("/test", handler)
+		loginplus.GET("/test", handler)
 	case http.MethodPost:
 		v1.POST("/test", handler)
-		login.POST("/test", handler)
+		loginplus.POST("/test", handler)
 	case http.MethodPut:
 		v1.PUT("/test", handler)
-		login.PUT("/test", handler)
+		loginplus.PUT("/test", handler)
 	case http.MethodPatch:
 		v1.PATCH("/test", handler)
-		login.PATCH("/test", handler)
+		loginplus.PATCH("/test", handler)
 	case http.MethodDelete:
 		v1.DELETE("/test", handler)
-		login.DELETE("/test", handler)
+		loginplus.DELETE("/test", handler)
 	case http.MethodHead:
 		v1.HEAD("/test", handler)
-		login.HEAD("/test", handler)
+		loginplus.HEAD("/test", handler)
 	case http.MethodOptions:
 		v1.OPTIONS("/test", handler)
-		login.OPTIONS("/test", handler)
+		loginplus.OPTIONS("/test", handler)
 	default:
 		panic("unknown method")
 	}

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"fmt"
@@ -367,7 +367,7 @@ func TestRouteStaticListingDir(t *testing.T) {
 	w := PerformRequest(router, http.MethodGet, "/")
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "gin.go")
+	assert.Contains(t, w.Body.String(), "ginplus.go")
 	assert.Equal(t, "text/html; charset=utf-8", w.Header().Get("Content-Type"))
 }
 
@@ -379,7 +379,7 @@ func TestRouteStaticNoListing(t *testing.T) {
 	w := PerformRequest(router, http.MethodGet, "/")
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
-	assert.NotContains(t, w.Body.String(), "gin.go")
+	assert.NotContains(t, w.Body.String(), "ginplus.go")
 }
 
 func TestRouterMiddlewareAndStatic(t *testing.T) {
@@ -391,10 +391,10 @@ func TestRouterMiddlewareAndStatic(t *testing.T) {
 	})
 	static.Static("/", "./")
 
-	w := PerformRequest(router, http.MethodGet, "/gin.go")
+	w := PerformRequest(router, http.MethodGet, "/ginplus.go")
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "package gin")
+	assert.Contains(t, w.Body.String(), "package ginplus")
 	// Content-Type='text/plain; charset=utf-8' when go version <= 1.16,
 	// else, Content-Type='text/x-go; charset=utf-8'
 	assert.NotEqual(t, "", w.Header().Get("Content-Type"))

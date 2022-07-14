@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package gin
+package ginplus
 
 import (
 	"flag"
@@ -36,7 +36,7 @@ const (
 // output io.Writer.
 // To support coloring in Windows use:
 // 		import "github.com/mattn/go-colorable"
-// 		gin.DefaultWriter = colorable.NewColorableStdout()
+// 		ginplus.DefaultWriter = colorable.NewColorableStdout()
 var DefaultWriter io.Writer = os.Stdout
 
 // DefaultErrorWriter is the default io.Writer used by Gin to debug errors

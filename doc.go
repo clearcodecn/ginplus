@@ -1,6 +1,6 @@
 /*
-Package gin implements a HTTP web framework called gin.
+package ginplus implements a HTTP web framework called ginplus.
 
-See https://gin-gonic.com/ for more information about gin.
+See https://gin-gonic.com/ for more information about ginplus.
 */
-package gin // import "github.com/clearcodecn/ginplus"
+package ginplus // import "github.com/clearcodecn/ginplus"

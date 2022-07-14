@@ -1,6 +1,6 @@
 # Gin Default Server
 
-This is API experiment for Gin.
+This is API experiment for ginplus.
 
 ```go
 package main
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	ginS.GET("/", func(c *gin.Context) { c.String(200, "Hello World") })
+	ginS.GET("/", func(c *ginplus.Context) { c.String(200, "Hello World") })
 	ginS.Run()
 }
 ```
