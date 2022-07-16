@@ -5,8 +5,10 @@
 package ginplus
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
 	"html/template"
 	"io"
@@ -19,6 +21,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/clearcodecn/ginplus/binding"
@@ -86,6 +89,10 @@ type Context struct {
 	data   H
 	theme  string
 	layout string
+
+	session *sessions.Session
+
+	beforeRender func()
 }
 
 /************************************/
@@ -893,10 +900,20 @@ func (c *Context) Cookie(name string) (string, error) {
 	return val, nil
 }
 
+var bufpool = sync.Pool{
+	New: func() interface{} {
+		return &bytes.Buffer{}
+	},
+}
+
 // Render writes the response headers and calls render.Render to render data.
 func (c *Context) Render(code int, r render.Render) {
+	if _, ok := r.(*HtmlRender); !ok {
+		if c.beforeRender != nil {
+			c.beforeRender()
+		}
+	}
 	c.Status(code)
-
 	if !bodyAllowedForStatus(code) {
 		r.WriteContentType(c.Writer)
 		c.Writer.WriteHeaderNow()
@@ -1175,4 +1192,8 @@ func (c *Context) SetLayout(l string) {
 
 func (c *Context) Log() *logrus.Entry {
 	return LogContext(c)
+}
+
+func (c *Context) Assign(key string, val interface{}) {
+	c.data[key] = val
 }

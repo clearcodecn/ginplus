@@ -13,7 +13,7 @@ import (
 	"sync"
 )
 
-func (t *TemplateManager) walkTemplate() (map[string]*template.Template, error) {
+func (t *TemplateManager) walkTemplate(ctx *Context) (map[string]*template.Template, error) {
 	var templates = make(map[string]*template.Template)
 	err := filepath.Walk(t.root, func(path string, info fs.FileInfo, err error) error {
 		if info.IsDir() {
@@ -28,7 +28,7 @@ func (t *TemplateManager) walkTemplate() (map[string]*template.Template, error) 
 		var tmpl *template.Template
 		tpl := templates[paths[0]]
 		if tpl == nil {
-			tpl = template.New(withoutPrefix)
+			tpl = template.New(withoutPrefix).Funcs(t.funcMap(ctx))
 			tpl, err = tpl.Parse(defaultVars)
 			if err != nil {
 				return err
@@ -37,7 +37,7 @@ func (t *TemplateManager) walkTemplate() (map[string]*template.Template, error) 
 		if tpl.Name() == withoutPrefix {
 			tmpl = tpl
 		} else {
-			tmpl = tpl.New(withoutPrefix)
+			tmpl = tpl.New(withoutPrefix).Funcs(t.funcMap(ctx))
 		}
 		data, err := ioutil.ReadFile(path)
 		if err != nil {
@@ -56,8 +56,11 @@ func (t *TemplateManager) walkTemplate() (map[string]*template.Template, error) 
 	return templates, nil
 }
 
-func (t *TemplateManager) funcMap() template.FuncMap {
-	return template.FuncMap{}
+func (t *TemplateManager) funcMap(ctx *Context) template.FuncMap {
+	return template.FuncMap{
+		"flash":      flash(ctx),
+		"hasSession": hasSession(ctx),
+	}
 }
 
 type TemplateManager struct {
@@ -109,14 +112,14 @@ const (
 func (r *TemplateManager) Instance(ctx *Context, name string, data H) render.Render {
 	var tpls map[string]*template.Template
 	if r.debug {
-		tmpls, err := r.walkTemplate()
+		tmpls, err := r.walkTemplate(ctx)
 		if err != nil {
 			panic(err)
 		}
 		tpls = tmpls
 	} else {
 		r.o.Do(func() {
-			tpls, err := r.walkTemplate()
+			tpls, err := r.walkTemplate(ctx)
 			if err != nil {
 				panic(err)
 			}
@@ -124,15 +127,25 @@ func (r *TemplateManager) Instance(ctx *Context, name string, data H) render.Ren
 		})
 		tpls = r.templates
 	}
-
-	dir := filepath.Dir(name)
-	tpl, ok := tpls[dir]
+	theme := ctx.theme
+	if theme == "" {
+		theme = filepath.Dir(name)
+	} else {
+		name = theme + "/" + name
+	}
+	tpl, ok := tpls[theme]
 	if !ok {
 		panic("template not found")
 	}
 	if data == nil {
 		data = H{}
 	}
+	if ctx.data != nil {
+		for k, v := range ctx.data {
+			data[k] = v
+		}
+	}
+
 	data["Context"] = ctx
 	return &HtmlRender{
 		template: tpl,
@@ -151,11 +164,26 @@ type HtmlRender struct {
 
 func (r *HtmlRender) Render(w http.ResponseWriter) error {
 	r.WriteContentType(w)
-
 	if r.name == "" {
 		return r.template.Execute(w, r.data)
 	}
-	return r.template.ExecuteTemplate(w, r.name, r.data)
+	buf := bufpool.Get().(*bytes.Buffer)
+	defer func() {
+		buf.Reset()
+		bufpool.Put(buf)
+	}()
+
+	err := r.template.ExecuteTemplate(buf, r.name, r.data)
+	if err != nil {
+		return err
+	}
+
+	if r.ctx.beforeRender != nil {
+		r.ctx.beforeRender()
+	}
+
+	_, err = buf.WriteTo(w)
+	return err
 }
 
 // WriteContentType (HTML) writes HTML ContentType.

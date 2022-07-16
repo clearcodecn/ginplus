@@ -212,7 +212,7 @@ func New() *Engine {
 // Default returns an Engine instance with the Logger and Recovery middleware already attached.
 func Default() *Engine {
 	engine := New()
-	engine.Use(ContextWithCid(), Logger(), Recovery())
+	engine.Use(ContextWithCid(), Logger(), Recovery(), Session())
 	return engine
 }
 
@@ -372,11 +372,6 @@ func iterate(path, method string, routes RoutesInfo, root *node) RoutesInfo {
 func (engine *Engine) Run(addr ...string) (err error) {
 	defer func() { debugPrintError(err) }()
 
-	if engine.isUnsafeTrustedProxies() {
-		debugPrint("[WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.\n" +
-			"Please check https://pkg.go.dev/github.com/clearcodecn/ginplus#readme-don-t-trust-all-proxies for details.")
-	}
-
 	address := resolveAddress(addr)
 	debugPrint("Listening and serving HTTP on %s\n", address)
 	err = http.ListenAndServe(address, engine.Handler())
@@ -493,11 +488,6 @@ func (engine *Engine) RunTLS(addr, certFile, keyFile string) (err error) {
 	debugPrint("Listening and serving HTTPS on %s\n", addr)
 	defer func() { debugPrintError(err) }()
 
-	if engine.isUnsafeTrustedProxies() {
-		debugPrint("[WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.\n" +
-			"Please check https://pkg.go.dev/github.com/clearcodecn/ginplus#readme-don-t-trust-all-proxies for details.")
-	}
-
 	err = http.ListenAndServeTLS(addr, certFile, keyFile, engine.Handler())
 	return
 }
@@ -508,11 +498,6 @@ func (engine *Engine) RunTLS(addr, certFile, keyFile string) (err error) {
 func (engine *Engine) RunUnix(file string) (err error) {
 	debugPrint("Listening and serving HTTP on unix:/%s", file)
 	defer func() { debugPrintError(err) }()
-
-	if engine.isUnsafeTrustedProxies() {
-		debugPrint("[WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.\n" +
-			"Please check https://pkg.go.dev/github.com/clearcodecn/ginplus#readme-don-t-trust-all-proxies for details.")
-	}
 
 	listener, err := net.Listen("unix", file)
 	if err != nil {
@@ -532,11 +517,6 @@ func (engine *Engine) RunFd(fd int) (err error) {
 	debugPrint("Listening and serving HTTP on fd@%d", fd)
 	defer func() { debugPrintError(err) }()
 
-	if engine.isUnsafeTrustedProxies() {
-		debugPrint("[WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.\n" +
-			"Please check https://pkg.go.dev/github.com/clearcodecn/ginplus#readme-don-t-trust-all-proxies for details.")
-	}
-
 	f := os.NewFile(uintptr(fd), fmt.Sprintf("fd@%d", fd))
 	listener, err := net.FileListener(f)
 	if err != nil {
@@ -552,11 +532,6 @@ func (engine *Engine) RunFd(fd int) (err error) {
 func (engine *Engine) RunListener(listener net.Listener) (err error) {
 	debugPrint("Listening and serving HTTP on listener what's bind with address@%s", listener.Addr())
 	defer func() { debugPrintError(err) }()
-
-	if engine.isUnsafeTrustedProxies() {
-		debugPrint("[WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.\n" +
-			"Please check https://pkg.go.dev/github.com/clearcodecn/ginplus#readme-don-t-trust-all-proxies for details.")
-	}
 
 	err = http.Serve(listener, engine.Handler())
 	return
