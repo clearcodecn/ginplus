@@ -8,8 +8,13 @@ import (
 	"context"
 	"github.com/sirupsen/logrus"
 	"github.com/teris-io/shortid"
+	"strings"
 	"time"
 )
+
+type LogConfig struct {
+	SkipPath string
+}
 
 const requestIdKey = "x-request-id"
 
@@ -45,13 +50,20 @@ func LogContext(ctx context.Context) *logrus.Entry {
 }
 
 func Logger() HandlerFunc {
-	return LoggerWithConfig()
+	return LoggerWithConfig(LogConfig{
+		SkipPath: "/static",
+	})
 }
 
 // LoggerWithConfig instance a Logger middleware with config.
-func LoggerWithConfig() HandlerFunc {
+func LoggerWithConfig(config LogConfig) HandlerFunc {
 	sid := shortid.MustNew(1, shortid.DefaultABC, uint64(time.Now().UnixNano()))
 	return func(c *Context) {
+		if config.SkipPath != "" && strings.HasPrefix(c.Request.URL.Path, config.SkipPath) {
+			c.Next()
+			return
+		}
+
 		start := time.Now()
 		if c.GetString(requestIdKey) == "" {
 			c.Set(requestIdKey, sid.MustGenerate())

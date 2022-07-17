@@ -57,10 +57,13 @@ func (t *TemplateManager) walkTemplate(ctx *Context) (map[string]*template.Templ
 }
 
 func (t *TemplateManager) funcMap(ctx *Context) template.FuncMap {
-	return template.FuncMap{
-		"flash":      flash(ctx),
-		"hasSession": hasSession(ctx),
+	fm := ctx.funcMaps
+	if fm == nil {
+		fm = make(template.FuncMap)
 	}
+	fm["flash"] = flash(ctx)
+	fm["hasSession"] = hasSession(ctx)
+	return fm
 }
 
 type TemplateManager struct {
